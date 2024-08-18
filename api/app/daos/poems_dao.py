@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from app import models
+from app import models, exceptions
 
 
 def create_poem(db: Session, poem: models.PoemCreate, author_id: int):
@@ -18,11 +18,30 @@ def get_poem_by_id(db: Session, poem_id: int):
     return db.query(models.Poem).filter(models.Poem.id == poem_id).first()
 
 
-def update_poem(db: Session, poem_id: int, title: str, content: str):
+def update_poem(db: Session, poem_id: int, title: str, content: str, author_id: int):
     db_poem = get_poem_by_id(db, poem_id)
-    if db_poem:
-        db_poem.title = title
-        db_poem.content = content
-        db.commit()
-        db.refresh(db_poem)
+
+    if not db_poem:
+        raise exceptions.NotFoundException()
+
+    if db_poem.author_id != author_id:
+        raise exceptions.PoemForbiddenException()
+
+    db_poem.title = title
+    db_poem.content = content
+    db.commit()
+    db.refresh(db_poem)
     return db_poem
+
+
+def drop_poem(db: Session, poem_id: int, author_id: int):
+    db_poem = get_poem_by_id(db, poem_id)
+
+    if not db_poem:
+        raise exceptions.NotFoundException()
+
+    if db_poem.author_id != author_id:
+        raise exceptions.PoemForbiddenException()
+
+    db.delete(db_poem)
+    db.commit()

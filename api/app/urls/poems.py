@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+
+from fastapi import APIRouter, Depends, HTTPException, status, Response
 from sqlalchemy.orm import Session
 
 from app import models, database, daos, exceptions, auth
@@ -17,7 +18,7 @@ async def create_poem(
     return db_poem
 
 
-@router.post("/poems")
+@router.post("/poems", status_code=status.HTTP_201_CREATED)
 async def create_poem(
     poem: models.PoemCreate,
     current_user: models.User = Depends(auth.get_current_user),
@@ -28,23 +29,27 @@ async def create_poem(
 
 
 @router.delete("/poems/{poem_id}")
-async def get_poems(
+async def delete_poem(
     poem_id: int,
     db: Session = Depends(database.get_db),
-    current_user: models.User = Depends(auth.get_current_user)):
+    current_user: models.User = Depends(auth.get_current_user)
+):
     try:
         daos.poems_dao.drop_poem(db, poem_id, current_user.id)
-    except exceptions.PoemDeleteForbiddenException:
+    except exceptions.PoemForbiddenException:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You don't have permission to delete this poem")
+    except exceptions.NotFoundException:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="You don't have permission to delete this poem")
+            detail="Poem not found")
     except:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Internal server error"
-        )
+            detail="Internal server error")
     else:
-        return HTTPException(status_code=status.HTTP_204_NO_CONTENT)
+        return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 @router.put("/poems/{poem_id}")
@@ -54,11 +59,18 @@ async def update_poem(
     current_user: models.User = Depends(auth.get_current_user),
     db: Session = Depends(database.get_db)
 ):
-    db_poem = daos.poems_dao.get_poem_by_id(db, poem_id)
-    if not db_poem or db_poem.owner_id != current_user.id:
+    try:
+        updated_poem = daos.poems_dao.update_poem(db, poem_id, poem.title, poem.content, author_id=current_user.id)
+        return updated_poem
+    except exceptions.PoemForbiddenException:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You don't have permission to delete this poem")
+    except exceptions.NotFoundException:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Poem not found or you do not have permission to edit this poem")
-
-    updated_poem = daos.poems_dao.update_poem(db, poem_id, poem.title, poem.content)
-    return updated_poem
+            detail="Poem not found")
+    except:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Internal server error")

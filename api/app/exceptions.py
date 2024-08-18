@@ -2,5 +2,9 @@ class UserEmailException(Exception):
     pass
 
 
-class PoemDeleteForbiddenException(Exception):
+class PoemForbiddenException(Exception):
+    pass
+
+
+class NotFoundException(Exception):
     pass
