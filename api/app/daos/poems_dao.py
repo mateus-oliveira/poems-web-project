@@ -2,8 +2,8 @@ from sqlalchemy.orm import Session
 from app import models
 
 
-def create_poem(db: Session, poem: models.PoemCreate, owner_id: int):
-    db_poem = models.Poem(title=poem.title, content=poem.content, owner_id=owner_id)
+def create_poem(db: Session, poem: models.PoemCreate, author_id: int):
+    db_poem = models.Poem(title=poem.title, content=poem.content, author_id=author_id)
     db.add(db_poem)
     db.commit()
     db.refresh(db_poem)

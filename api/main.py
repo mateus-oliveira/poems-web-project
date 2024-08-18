@@ -22,7 +22,7 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
     except JWTError:
         raise credentials_exception
 
-    user = users_dao.get_user_by_id(db, user_id)
+    user = daos.users_dao.get_user_by_id(db, user_id)
     if user is None:
         raise credentials_exception
     return user
@@ -74,6 +74,7 @@ async def login(form_data: models.UserLogin, db: Session = Depends(database.get_
         "access_token": access_token,
         "token_type": "Bearer",
     }
+
 
 @app.post("/poems")
 async def create_poem(
