@@ -3,8 +3,8 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, JWTError
 from sqlalchemy.orm import Session
 
-from app import models, database, auth
-from daos import users_dao, poems_dao
+from app import models, database, auth, daos
+
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
@@ -41,7 +41,7 @@ async def liveness_probe():
 @app.post("/register", status_code=status.HTTP_201_CREATED)
 async def register_user(user: models.UserCreate, db: Session = Depends(database.get_db)):
     hashed_password = auth.get_password_hash(user.password)
-    db_user = users_dao.create_user(db, user, hashed_password)
+    db_user = daos.users_dao.create_user(db, user, hashed_password)
 
     return {
         'id': db_user.id,
@@ -51,7 +51,7 @@ async def register_user(user: models.UserCreate, db: Session = Depends(database.
 
 @app.post("/login")
 async def login(form_data: models.UserLogin, db: Session = Depends(database.get_db)):
-    user = users_dao.get_user_by_email(db, form_data.email)
+    user = daos.users_dao.get_user_by_email(db, form_data.email)
 
     if not user or not auth.verify_password(form_data.password, user.password):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Incorrect email or password")
@@ -69,13 +69,13 @@ async def create_poem(
     current_user: models.User = Depends(get_current_user),
     db: Session = Depends(database.get_db)
 ):
-    db_poem = poems_dao.create_poem(db, poem, current_user.id)
+    db_poem = daos.poems_dao.create_poem(db, poem, current_user.id)
     return db_poem
 
 
 @app.get("/poems")
 async def get_poems(skip: int = 0, limit: int = 10, db: Session = Depends(database.get_db)):
-    return poems_dao.get_poems(db, skip, limit)
+    return daos.poems_dao.get_poems(db, skip, limit)
 
 
 @app.put("/poems/{poem_id}")
@@ -85,9 +85,11 @@ async def update_poem(
     current_user: models.User = Depends(get_current_user),
     db: Session = Depends(database.get_db)
 ):
-    db_poem = poems_dao.get_poem_by_id(db, poem_id)
+    db_poem = daos.poems_dao.get_poem_by_id(db, poem_id)
     if not db_poem or db_poem.owner_id != current_user.id:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Poem not found or you do not have permission to edit this poem")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Poem not found or you do not have permission to edit this poem")
 
-    updated_poem = poems_dao.update_poem(db, poem_id, poem.title, poem.content)
+    updated_poem = daos.poems_dao.update_poem(db, poem_id, poem.title, poem.content)
     return updated_poem
