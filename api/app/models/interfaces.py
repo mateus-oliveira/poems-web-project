@@ -16,3 +16,11 @@ class UserLogin(BaseModel):
 
     class ConfigDict:
         orm_mode = True
+
+
+class PoemCreate(BaseModel):
+    title: str
+    content: str
+
+    class ConfigDict:
+        orm_mode = True
