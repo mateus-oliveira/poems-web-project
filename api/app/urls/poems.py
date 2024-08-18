@@ -1,21 +1,11 @@
-
 from fastapi import APIRouter, Depends, HTTPException, status, Response
 from sqlalchemy.orm import Session
+# from typing import List, Optional
 
 from app import models, database, daos, exceptions, auth
 
 
 router = APIRouter()
-
-
-@router.post("/poems")
-async def create_poem(
-    poem: models.PoemCreate,
-    current_user: models.User = Depends(auth.get_current_user),
-    db: Session = Depends(database.get_db)
-):
-    db_poem = daos.poems_dao.create_poem(db, poem, current_user.id)
-    return db_poem
 
 
 @router.post("/poems", status_code=status.HTTP_201_CREATED)
@@ -65,7 +55,7 @@ async def update_poem(
     except exceptions.PoemForbiddenException:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="You don't have permission to delete this poem")
+            detail="You don't have permission to update this poem")
     except exceptions.NotFoundException:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -74,3 +64,36 @@ async def update_poem(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Internal server error")
+
+
+@router.get("/poems")
+async def list_poems(
+    skip: int = 0,
+    limit: int = 10,
+    db: Session = Depends(database.get_db)
+):
+    poems = daos.poems_dao.get_poems(db, skip=skip, limit=limit)
+    return poems
+
+
+@router.get("/my/poems")
+async def list_poems(
+    skip: int = 0,
+    limit: int = 10,
+    current_user: models.User = Depends(auth.get_current_user),
+    db: Session = Depends(database.get_db)
+):
+    poems = daos.poems_dao.get_poems_by_author(db, current_user.id, skip=skip, limit=limit)
+    return poems
+
+
+@router.get("/poems/{poem_id}")
+async def get_poem(
+    poem_id: int,
+    current_user: models.User = Depends(auth.get_current_user),
+    db: Session = Depends(database.get_db)
+):
+    poem = daos.poems_dao.get_poem_by_id(db, poem_id)
+    if not poem:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Poem not found")
+    return poem

@@ -14,6 +14,10 @@ def get_poems(db: Session, skip: int = 0, limit: int = 10):
     return db.query(models.Poem).offset(skip).limit(limit).all()
 
 
+def get_poems_by_author(db: Session, author_id: int, skip: int = 0, limit: int = 10):
+    return db.query(models.Poem).filter(models.Poem.author_id == author_id).offset(skip).limit(limit).all()
+
+
 def get_poem_by_id(db: Session, poem_id: int):
     return db.query(models.Poem).filter(models.Poem.id == poem_id).first()
 
