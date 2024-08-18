@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from app import models
+from app import models, exceptions
 
 
 def get_user_by_email(db: Session, email: str):
@@ -7,6 +7,11 @@ def get_user_by_email(db: Session, email: str):
 
 
 def create_user(db: Session, user: models.UserCreate, hashed_password: str):
+    old_user = get_user_by_email(db, user.email)
+
+    if old_user:
+        raise exceptions.UserEmailException()
+
     db_user = models.User(email=user.email, name=user.name, password=hashed_password)
     db.add(db_user)
     db.commit()

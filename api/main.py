@@ -3,7 +3,7 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, JWTError
 from sqlalchemy.orm import Session
 
-from app import models, database, auth, daos
+from app import models, database, auth, daos, exceptions
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
@@ -41,13 +41,25 @@ async def liveness_probe():
 @app.post("/register", status_code=status.HTTP_201_CREATED)
 async def register_user(user: models.UserCreate, db: Session = Depends(database.get_db)):
     hashed_password = auth.get_password_hash(user.password)
-    db_user = daos.users_dao.create_user(db, user, hashed_password)
+    try:
+        db_user = daos.users_dao.create_user(db, user, hashed_password)
+    except exceptions.UserEmailException:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Email already used"
+        )
+    except:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Internal server error"
+        )
+    else:
+        return {
+            'id': db_user.id,
+            'email': db_user.email,
+            'name': db_user.name,
+        }
 
-    return {
-        'id': db_user.id,
-        'email': db_user.email,
-        'name': db_user.name,
-    }
 
 @app.post("/login")
 async def login(form_data: models.UserLogin, db: Session = Depends(database.get_db)):
