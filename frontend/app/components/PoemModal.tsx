@@ -83,7 +83,7 @@ const PostModal = ({ poem, onClose }: PoemModalProps) => {
         setHasLiked(true);
       }
     } catch (error) {
-      console.log('Error when trying like post', error);
+      console.log('Error when trying like this poem', error);
     }
   };
 
@@ -104,7 +104,7 @@ const PostModal = ({ poem, onClose }: PoemModalProps) => {
       setComments([...comments, newComment]);
       setCommentText("");
     } catch (error) {
-      console.log('Erro ao comentar no post', error);
+      console.log('Error when trying to comment', error);
     }
   };
 
