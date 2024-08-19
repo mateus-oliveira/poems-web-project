@@ -1,3 +1,4 @@
+from fastapi import status
 from fastapi.testclient import TestClient
 from unittest.mock import patch
 
@@ -14,7 +15,7 @@ def test_create_poem_success(mock_get_current_user, mock_create_poem, client: Te
     authenticate(client)
     response = client.post("/poems", json={"title": "Test Poem", "content": "This is a test poem"})
 
-    assert response.status_code == 201
+    assert response.status_code == status.HTTP_201_CREATED
     data = response.json()
     assert data["id"] == 1
     assert data["title"] == "Test Poem"
@@ -32,7 +33,7 @@ def test_list_poems_success(mock_get_poems, client: TestClient):
 
     response = client.get("/poems")
 
-    assert response.status_code == 200
+    assert response.status_code == status.HTTP_200_OK
     data = response.json()
     assert len(data) == 2
     assert data[0]["title"] == "Poem 1"
@@ -52,7 +53,7 @@ def test_list_my_poems_success(mock_get_current_user, mock_get_poems_by_author, 
 
     response = client.get("/my/poems")
 
-    assert response.status_code == 200
+    assert response.status_code == status.HTTP_200_OK
     data = response.json()
     assert len(data) == 2
     assert data[0]["title"] == "Poem 1"
@@ -69,7 +70,7 @@ def test_get_poem_success(mock_get_current_user, mock_get_poem_by_id, client: Te
 
     response = client.get("/poems/1")
 
-    assert response.status_code == 200
+    assert response.status_code == status.HTTP_200_OK
     data = response.json()
     assert data["id"] == 1
     assert data["title"] == "Test Poem"
@@ -86,7 +87,7 @@ def test_get_poem_not_found(mock_get_current_user, mock_get_poem_by_id, client: 
 
     response = client.get("/poems/999")
 
-    assert response.status_code == 404
+    assert response.status_code == status.HTTP_404_NOT_FOUND
     data = response.json()
     assert data["detail"] == "Poem not found"
 
@@ -100,7 +101,7 @@ def test_delete_poem_success(mock_get_current_user, mock_drop_poem, client: Test
 
     response = client.delete("/poems/1")
 
-    assert response.status_code == 204
+    assert response.status_code == status.HTTP_204_NO_CONTENT
 
     mock_drop_poem.assert_called_once()
 
@@ -113,7 +114,7 @@ def test_delete_poem_forbidden(mock_get_current_user, mock_drop_poem, client: Te
 
     response = client.delete("/poems/1")
 
-    assert response.status_code == 403
+    assert response.status_code == status.HTTP_403_FORBIDDEN
     data = response.json()
     assert data["detail"] == "You don't have permission to delete this poem"
 
@@ -128,7 +129,7 @@ def test_update_poem_success(mock_get_current_user, mock_update_poem, client: Te
 
     response = client.put("/poems/1", json={"title": "Updated Title", "content": "Updated Content"})
 
-    assert response.status_code == 200
+    assert response.status_code == status.HTTP_200_OK
     data = response.json()
     assert data["id"] == 1
     assert data["title"] == "Updated Title"
@@ -145,7 +146,7 @@ def test_update_poem_forbidden(mock_get_current_user, mock_update_poem, client: 
 
     response = client.put("/poems/1", json={"title": "Updated Title", "content": "Updated Content"})
 
-    assert response.status_code == 403
+    assert response.status_code == status.HTTP_403_FORBIDDEN
     data = response.json()
     assert data["detail"] == "You don't have permission to update this poem"
 

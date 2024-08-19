@@ -1,3 +1,4 @@
+from fastapi import status
 from fastapi.testclient import TestClient
 from unittest.mock import patch
 
@@ -15,7 +16,7 @@ def test_register_user_success(mock_create_user, client: TestClient):
         "password": "password123"
     })
 
-    assert response.status_code == 201
+    assert response.status_code == status.HTTP_201_CREATED
     data = response.json()
     assert data["id"] == 1
     assert data["email"] == "newuser@example.com"
@@ -34,7 +35,7 @@ def test_register_user_email_already_used(mock_create_user, client: TestClient):
         "password": "password123"
     })
 
-    assert response.status_code == 400
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
     data = response.json()
     assert data["detail"] == "Email already used"
 
@@ -55,10 +56,13 @@ def test_login_success(mock_create_access_token, mock_verify_password, mock_get_
         "password": "password123"
     })
 
-    assert response.status_code == 200
+    assert response.status_code == status.HTTP_200_OK
     data = response.json()
     assert data["access_token"] == "testtoken"
     assert data["token_type"] == "Bearer"
+    assert data["user"]["id"] == 1
+    assert data["user"]["email"] == "sampleuser@example.com"
+    assert data["user"]["name"] == "Sample User"
 
     mock_get_user_by_email.assert_called_once()
     mock_verify_password.assert_called_once()
@@ -77,7 +81,7 @@ def test_login_incorrect_password(mock_verify_password, mock_get_user_by_email, 
         "password": "wrongpassword"
     })
 
-    assert response.status_code == 400
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
     data = response.json()
     assert data["detail"] == "Incorrect email or password"
 
@@ -94,7 +98,7 @@ def test_login_non_existent_user(mock_get_user_by_email, client: TestClient):
         "password": "password123"
     })
 
-    assert response.status_code == 400
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
     data = response.json()
     assert data["detail"] == "Incorrect email or password"
 
