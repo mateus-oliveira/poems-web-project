@@ -24,13 +24,13 @@ const Header = () => {
           onClick={handleCreatePost}
           className="bg-white text-blue-500 px-4 py-2 rounded mr-5"
         >
-          Criar +
+          Create +
         </button>
         <button
           onClick={handleLogout}
           className="bg-white text-blue-500 px-4 py-2 rounded"
         >
-          Sair ->
+          Sign Out ->
         </button>
       </div>
     </header>

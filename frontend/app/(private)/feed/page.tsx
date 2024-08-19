@@ -5,6 +5,7 @@ import api from '@/utils/api';
 import { API_POSTS } from '@/constants/routes';
 import PoemModal from '@/app/components/PoemModal';
 import Header from '@/app/components/Header';
+import PoemCard from '@/app/components/PoemCard';
 
 export interface PoemList {
   id: number;
@@ -58,27 +59,17 @@ const Feed = () => {
     }
   };
 
-  if (loading && page === 1) return <div>Carregando...</div>;
+  if (loading && page === 1) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
 
   return (
-    <div className="p-4">
+    <div className=" h-screen bg-gray-100">
       <Header />
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-        {poems.map(poem => (
-          <div 
-            key={poem.id} 
-            onClick={() => openModal(poem)}
-            className="cursor-pointer max-w-sm mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
-            <div className="px-6 py-4">
-              <h3 className="text-xl font-semibold text-gray-800 mb-2">{poem.title}</h3>
-              <p className="text-gray-600 text-base">See more...</p>
-            </div>
-          </div>
-        ))}
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 p-4">
+        {poems.map(poem => <PoemCard poem={poem} onClick={() => openModal(poem)} />)}
       </div>
 
-      <div className="flex justify-between items-center mt-10">
+      <div className="flex justify-between items-center mt-10 p-4">
         <button
           onClick={handlePreviousPage}
           disabled={page === 1}
@@ -87,7 +78,7 @@ const Feed = () => {
           Left
         </button>
 
-        <span>Page {page} / {totalPages}</span>
+        <span className='text-black'>Page {page} / {totalPages}</span>
 
         <button
           onClick={handleNextPage}
@@ -97,8 +88,6 @@ const Feed = () => {
           Right
         </button>
       </div>
-
-      {loading && page > 1 && <div>Loading...</div>}
 
       {selectedPoem && (
         <PoemModal poem={selectedPoem} onClose={closeModal} />
