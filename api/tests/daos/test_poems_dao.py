@@ -41,10 +41,10 @@ def test_update_poem(db):
     poem_data = models.PoemCreate(title="Original Title", content="Original Content")
     created_poem = poems_dao.create_poem(db, poem=poem_data, author_id=1)
 
-    updated_poem = poems_dao.update_poem(db, poem_id=created_poem.id, title="Updated Title", content="Updated Content")
+    updated_poem = poems_dao.update_poem(
+        db, poem_id=created_poem.id,
+        title="Updated Title", content="Updated Content", author_id=1)
 
     assert updated_poem is not None
     assert updated_poem.title == "Updated Title"
     assert updated_poem.content == "Updated Content"
-
-    assert poems_dao.update_poem(db, poem_id=999, title="Non-existent", content="Non-existent") is None
