@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import swal from 'sweetalert';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit } from '@fortawesome/free-solid-svg-icons';
-import getUser from '@/utils/getUser';
 import { API_POEMS } from '@/constants/routes';
 import api from '@/utils/api';
+import getUser from '@/utils/getUser';
 
 
 interface User {
@@ -36,7 +37,7 @@ const PoemCard = ({ poem, onClick, detailed = false }) => {
     
     try {
       await api.put(`${API_POEMS}/${poem.id}`, {title: editedTitle, content: editedContent});
-      swal("Success!", "Poem already created", "success");
+      swal("Success!", "Poem already updated", "success");
       handleModalClose();
     } catch (error) {
       setError('Error when trying create poem');
