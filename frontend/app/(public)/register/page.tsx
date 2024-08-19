@@ -23,10 +23,10 @@ const Register = () => {
 
     await api.post(API_REGISTER, { name, email, password })
       .then(() => {
-        swal("Successo!", "Conta criada com sucesso!", "success");
+        swal("Success!", "Account creates!", "success");
         router.push(LOGIN);
       })
-      .catch(() => swal("Ops!", "Houve um problema na criação da conta", "error"));
+      .catch(() => swal("Oops!", "Error when trying create account", "error"));
   };
 
   return (
