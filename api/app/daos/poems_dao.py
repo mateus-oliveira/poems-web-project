@@ -49,3 +49,11 @@ def drop_poem(db: Session, poem_id: int, author_id: int):
 
     db.delete(db_poem)
     db.commit()
+
+
+def count_poems(db: Session):
+    return db.query(models.Poem).count()
+
+
+def count_poems_by_author(db: Session, author_id: int):
+    return db.query(models.Poem).filter(models.Poem.author_id == author_id).count()

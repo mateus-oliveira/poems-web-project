@@ -24,27 +24,35 @@ def test_create_poem_success(mock_get_current_user, mock_create_poem, client: Te
     mock_create_poem.assert_called_once()
 
 
+
+@patch("app.daos.poems_dao.count_poems")
 @patch("app.daos.poems_dao.get_poems")
-def test_list_poems_success(mock_get_poems, client: TestClient):
+def test_list_poems_success(mock_get_poems, mock_count_poems, client: TestClient):
+    mock_count_poems.return_value = 1
     mock_get_poems.return_value = [
         models.Poem(id=1, title="Poem 1", content="Content 1", author_id=1),
         models.Poem(id=2, title="Poem 2", content="Content 2", author_id=1)
     ]
 
     response = client.get("/poems")
+    data = response.json()
 
     assert response.status_code == status.HTTP_200_OK
-    data = response.json()
     assert len(data) == 2
-    assert data[0]["title"] == "Poem 1"
-    assert data[1]["title"] == "Poem 2"
+    assert data["poems"][0]["title"] == "Poem 1"
+    assert data["poems"][1]["title"] == "Poem 2"
+    assert data["total_pages"] == 1
 
     mock_get_poems.assert_called_once()
 
 
 @patch("app.daos.poems_dao.get_poems_by_author")
+@patch("app.daos.poems_dao.count_poems_by_author")
 @patch("app.auth.get_current_user")
-def test_list_my_poems_success(mock_get_current_user, mock_get_poems_by_author, client: TestClient):
+def test_list_my_poems_success(
+    mock_get_current_user, mock_count_poems_by_author,
+    mock_get_poems_by_author, client: TestClient):
+    mock_count_poems_by_author.return_value = 2
     mock_get_current_user.return_value = models.User(id=1, email="user@example.com", name="Test User")
     mock_get_poems_by_author.return_value = [
         models.Poem(id=1, title="Poem 1", content="Content 1", author_id=1),
@@ -52,12 +60,14 @@ def test_list_my_poems_success(mock_get_current_user, mock_get_poems_by_author, 
     ]
 
     response = client.get("/my/poems")
+    
+    data = response.json()
 
     assert response.status_code == status.HTTP_200_OK
-    data = response.json()
     assert len(data) == 2
-    assert data[0]["title"] == "Poem 1"
-    assert data[1]["title"] == "Poem 2"
+    assert data["poems"][0]["title"] == "Poem 1"
+    assert data["poems"][1]["title"] == "Poem 2"
+    assert data["total_pages"] == 1
 
     mock_get_poems_by_author.assert_called_once()
 
@@ -75,6 +85,7 @@ def test_get_poem_success(mock_get_current_user, mock_get_poem_by_id, client: Te
     assert data["id"] == 1
     assert data["title"] == "Test Poem"
     assert data["content"] == "This is a test poem"
+    assert "author" in data
 
     mock_get_poem_by_id.assert_called_once()
 

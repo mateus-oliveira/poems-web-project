@@ -71,10 +71,17 @@ async def update_poem(
 async def list_poems(
     skip: int = 0,
     limit: int = 10,
+    current_user: models.User = Depends(auth.get_current_user),
     db: Session = Depends(database.get_db)
 ):
+    total_poems = daos.poems_dao.count_poems(db)
     poems = daos.poems_dao.get_poems(db, skip=skip, limit=limit)
-    return poems
+    total_pages = (total_poems + limit - 1) // limit
+
+    return {
+        "poems": poems,
+        "total_pages": total_pages
+    }
 
 
 @router.get("/my/poems")
@@ -84,8 +91,14 @@ async def list_poems(
     current_user: models.User = Depends(auth.get_current_user),
     db: Session = Depends(database.get_db)
 ):
+    total_poems = daos.poems_dao.count_poems_by_author(db, current_user.id)
     poems = daos.poems_dao.get_poems_by_author(db, current_user.id, skip=skip, limit=limit)
-    return poems
+    total_pages = (total_poems + limit - 1) // limit
+
+    return {
+        "poems": poems,
+        "total_pages": total_pages
+    }
 
 
 @router.get("/poems/{poem_id}")
@@ -97,4 +110,16 @@ async def get_poem(
     poem = daos.poems_dao.get_poem_by_id(db, poem_id)
     if not poem:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Poem not found")
-    return poem
+    
+    author = daos.get_user_by_id(db, poem.author_id)
+
+    return {
+        "id": poem.id,
+        "title": poem.title,
+        "content": poem.content,
+        "author": {
+            "id": author.id,
+            "email": author.email,
+            "name": author.name,
+        }
+    }
