@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import api from '@/utils/api';
-import { API_COMMENTS, API_LIKES, API_POSTS } from '@/constants/routes';
+import { API_COMMENTS, API_LIKES, API_POEMS } from '@/constants/routes';
 import getUser from '@/utils/getUser';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart } from '@fortawesome/free-solid-svg-icons';
@@ -52,8 +52,8 @@ const PostModal = ({ poem, onClose }: PoemModalProps) => {
     const fetchData = async () => {
       try {
         const [likesData, commentsData] = await Promise.all([
-          api.get<object>(`${API_POSTS}/${poem.id}${API_LIKES}`),
-          api.get<Comment[]>(`${API_POSTS}/${poem.id}${API_COMMENTS}`),
+          api.get<object>(`${API_POEMS}/${poem.id}${API_LIKES}`),
+          api.get<Comment[]>(`${API_POEMS}/${poem.id}${API_COMMENTS}`),
         ]);
 
         setLikes(likesData?.length ?? 0);
@@ -74,7 +74,7 @@ const PostModal = ({ poem, onClose }: PoemModalProps) => {
 
   const handleLike = async () => {
     try {
-      await api.post(`${API_POSTS}/${poem.id}${API_LIKES}`);
+      await api.post(`${API_POEMS}/${poem.id}${API_LIKES}`);
       if (hasLiked) {
         setLikes(likes - 1);
         setHasLiked(false);
@@ -89,7 +89,7 @@ const PostModal = ({ poem, onClose }: PoemModalProps) => {
 
   const fetchAuthor = async () => {
     try {
-      const data = await api.get(`${API_POSTS}/${poem.id}`);
+      const data = await api.get(`${API_POEMS}/${poem.id}`);
       setAuthor(data.author);
     } catch (error) {
       console.log(error);
@@ -99,7 +99,7 @@ const PostModal = ({ poem, onClose }: PoemModalProps) => {
   const handleComment = async () => {
     if (commentText.trim() === "") return;
     try {
-      const newComment = await api.post<Comment>(`${API_POSTS}/${poem.id}${API_COMMENTS}`, { content: commentText });
+      const newComment = await api.post<Comment>(`${API_POEMS}/${poem.id}${API_COMMENTS}`, { content: commentText });
       newComment.author = user;
       setComments([...comments, newComment]);
       setCommentText("");

@@ -49,6 +49,16 @@ const api = {
       },
     });
   },
+
+  async put<T>(endpoint: string, body: any): Promise<T> {
+    return this.fetch<T>(endpoint, {
+      method: 'PUT',
+      body: JSON.stringify(body),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+  },
 };
 
 export default api;

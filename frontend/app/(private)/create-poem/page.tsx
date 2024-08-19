@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import api from '@/utils/api';
 import swal from 'sweetalert';
-import { API_POSTS, FEED } from '@/constants/routes';
+import { API_POEMS, FEED } from '@/constants/routes';
 import { useRouter } from 'next/navigation';
 
 
@@ -20,7 +20,7 @@ const CreatePoem = () => {
     setError(null);
 
     try {
-      await api.post(API_POSTS, {title, content});
+      await api.post(API_POEMS, {title, content});
       swal("Success!", "Poem already created", "success");
       router.push(FEED);
     } catch (error) {

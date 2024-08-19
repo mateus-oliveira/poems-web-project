@@ -2,10 +2,11 @@
 
 import { useEffect, useState } from 'react';
 import api from '@/utils/api';
-import { API_POEMS } from '@/constants/routes';
+import { API_MY_POEMS } from '@/constants/routes';
 import PoemModal from '@/app/components/PoemModal';
 import Header from '@/app/components/Header';
 import PoemCard from '@/app/components/PoemCard';
+
 
 export interface PoemList {
   id: number;
@@ -14,7 +15,8 @@ export interface PoemList {
   author_id: number;
 };
 
-const Feed = () => {
+
+const Desk = () => {
   const [poems, setPoems] = useState<PoemList[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -25,7 +27,7 @@ const Feed = () => {
   const fetchPoems = async (page: number) => {
     try {
       setLoading(true);
-      const data = await api.get<any>(`${API_POEMS}?skip=${page-1}`);
+      const data = await api.get<any>(`${API_MY_POEMS}?skip=${page-1}`);
       setPoems(data.poems);
       setTotalPages(data.total_pages);
     } catch (error) {
@@ -96,4 +98,4 @@ const Feed = () => {
   );
 };
 
-export default Feed;
+export default Desk;
