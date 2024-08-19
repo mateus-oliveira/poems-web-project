@@ -11,11 +11,11 @@ def create_poem(db: Session, poem: models.PoemCreate, author_id: int):
 
 
 def get_poems(db: Session, skip: int = 0, limit: int = 10):
-    return db.query(models.Poem).offset(skip).limit(limit).all()
+    return db.query(models.Poem).offset(skip*limit).limit(limit).all()
 
 
 def get_poems_by_author(db: Session, author_id: int, skip: int = 0, limit: int = 10):
-    return db.query(models.Poem).filter(models.Poem.author_id == author_id).offset(skip).limit(limit).all()
+    return db.query(models.Poem).filter(models.Poem.author_id == author_id).offset(skip*limit).limit(limit).all()
 
 
 def get_poem_by_id(db: Session, poem_id: int):
