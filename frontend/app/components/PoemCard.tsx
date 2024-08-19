@@ -47,9 +47,9 @@ const PoemCard = ({ poem, onClick, detailed = false }) => {
   return (
     <div 
       key={poem.id} 
-      className="cursor-pointer mt-4 w-96 mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+      className="mt-4 w-96 mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
       <div className="px-6 py-4 flex justify-between items-center">
-        <div onClick={onClick} >
+        <div onClick={onClick} className="cursor-pointer" >
           <h3 className="text-xl font-semibold text-gray-800 mb-2">{poem.title}</h3>
           <p className="text-gray-600 text-base whitespace-pre-line">{detailed ? poem.content : "See more..."}</p>
         </div>
