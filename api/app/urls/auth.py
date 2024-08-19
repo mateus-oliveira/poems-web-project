@@ -43,4 +43,9 @@ async def login(form_data: models.UserLogin, db: Session = Depends(database.get_
     return {
         "access_token": access_token,
         "token_type": "Bearer",
+        "user": {
+            "id": user.id,
+            "email": user.email,
+            "name": user.name,
+        }
     }
