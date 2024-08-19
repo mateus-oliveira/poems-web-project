@@ -1,4 +1,5 @@
 from pydantic import BaseModel, EmailStr, constr
+from typing import List
 
 
 class UserCreate(BaseModel):
@@ -21,6 +22,32 @@ class UserLogin(BaseModel):
 class PoemCreate(BaseModel):
     title: str
     content: str
+
+    class ConfigDict:
+        orm_mode = True
+
+
+class CommentCreate(BaseModel):
+    content: str
+
+    class ConfigDict:
+        orm_mode = True
+
+
+
+class Author(BaseModel):
+    id: int
+    name: str
+    email: str
+
+    class ConfigDict:
+        orm_mode = True
+
+
+class CommentWithAuthor(BaseModel):
+    id: int
+    content: str
+    author: Author
 
     class ConfigDict:
         orm_mode = True

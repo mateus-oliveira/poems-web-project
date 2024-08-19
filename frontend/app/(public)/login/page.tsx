@@ -31,9 +31,11 @@ const Login = () => {
 
   return (
     <div className="flex items-center justify-center h-screen bg-gray-100">
-      <form onSubmit={handleLogin} className="bg-white p-6 rounded shadow-md w-80">
-        <h2 className="text-2xl mb-4">Login</h2>
-        <div className="mb-4">
+      <form
+        onSubmit={handleLogin}
+        className="flex flex-col items-center justify-between bg-white p-6 rounded shadow-md w-1/3 h-1/2">
+        <h1 className="text-black text-2xl font-bold">FeenixAI - Poem</h1>
+        <div className="mb-4 w-full">
           <label className="block text-gray-700">Email</label>
           <input
             type="email"
@@ -43,7 +45,7 @@ const Login = () => {
             required
           />
         </div>
-        <div className="mb-4">
+        <div className="mb-4 w-full">
           <label className="block text-gray-700">Password</label>
           <input
             type="password"

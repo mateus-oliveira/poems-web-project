@@ -66,7 +66,7 @@ const Feed = () => {
     <div className=" h-screen bg-gray-100">
       <Header />
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 p-4">
-        {poems.map(poem => <PoemCard poem={poem} onClick={() => openModal(poem)} />)}
+        {poems.map(poem => <PoemCard key={poem.id} poem={poem} onClick={() => openModal(poem)} />)}
       </div>
 
       <div className="flex justify-between items-center mt-10 p-4">

@@ -1,7 +1,6 @@
 from app.config import database
 from fastapi import APIRouter, Depends, HTTPException, status, Response
 from sqlalchemy.orm import Session
-# from typing import List, Optional
 
 from app import models, daos, exceptions, auth
 
