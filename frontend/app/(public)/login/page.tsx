@@ -17,7 +17,7 @@ const Login = () => {
 
     await api.post(API_LOGIN, { email, password })
       .then((response: any) => {
-        swal("Success!", "Welcome to FeenixAI Poems", "success");
+        swal("Success!", "Welcome to Poems", "success");
         localStorage.setItem(TOKEN, response.access_token);
         localStorage.setItem(USER, JSON.stringify(response.user));
         router.push(FEED);
@@ -34,7 +34,7 @@ const Login = () => {
       <form
         onSubmit={handleLogin}
         className="flex flex-col items-center justify-between bg-white p-6 rounded shadow-md w-1/3 h-1/2">
-        <h1 className="text-black text-2xl font-bold">FeenixAI - Poem</h1>
+        <h1 className="text-black text-2xl font-bold">Poems</h1>
         <div className="mb-4 w-full">
           <label className="block text-gray-700">Email</label>
           <input

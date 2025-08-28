@@ -15,7 +15,7 @@ app.include_router(urls.router)
 @app.get("/")
 async def liveness_probe():
     return {
-        'title': 'FeenixAI API',
+        'title': 'Poems API',
         'author': 'Mateus Oliveira',
         'date': '17/08/2024',
     }

@@ -20,7 +20,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <title>FeenixAI - Poems</title>
+        <title>Poems</title>
       </head>
       <body className={inter.className}>
         {isPrivatePage ? <PrivateRoute>{children}</PrivateRoute> : <PublicRoute>{children}</PublicRoute>}

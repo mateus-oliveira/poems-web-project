@@ -1,2 +1,2 @@
-export const TOKEN = 'feenixai-token';
-export const USER = 'feenixai-user';
+export const TOKEN = 'poems-token';
+export const USER = 'poems-user';

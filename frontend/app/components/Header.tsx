@@ -24,7 +24,7 @@ const Header = () => {
 
   return (
     <header className="bg-blue-500 text-white p-4 flex justify-between items-center mb-20">
-      <h1 className="text-xl font-bold">FeenixAI - Poems</h1>
+      <h1 className="text-xl font-bold">Poems</h1>
       <div>
         <button
           onClick={handleCreatePoem}

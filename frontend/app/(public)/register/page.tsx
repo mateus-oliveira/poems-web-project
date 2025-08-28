@@ -34,7 +34,7 @@ const Register = () => {
       <form
         onSubmit={handleRegister}
         className="flex flex-col items-center justify-between bg-white p-6 rounded shadow-md w-1/3 h-2/3">
-        <h1 className="text-black text-2xl font-bold">FeenixAI - Poem</h1>
+        <h1 className="text-black text-2xl font-bold">Poems</h1>
         <div className="mb-4 w-full">
           <label className="block text-gray-700">Name</label>
           <input
